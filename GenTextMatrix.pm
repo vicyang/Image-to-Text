@@ -10,7 +10,7 @@ use Encode;
 use Imager;
 use List::Util qw/sum/;
 
-our $SIZE = 12;
+our $SIZE = 16;
 our $font = Imager::Font->new(file  => encode('gbk', 'C:/windows/fonts/consola.TTF'), #STXINGKA.TTF
                           size  => $SIZE );
 

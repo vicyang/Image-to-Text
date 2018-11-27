@@ -13,7 +13,7 @@ my $img = Imager->new( file => "gecko_contour.jpg" )
     or die Imager->errstr();
 
 # 缩放
-#$img = $img->scale(xpixels => 380);
+#$img = $img->scale(xpixels => 300);
 my ($h, $w) = ($img->getheight(), $img->getwidth());
 
 # 反色
