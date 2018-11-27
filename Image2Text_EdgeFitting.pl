@@ -34,28 +34,45 @@ printf "%d x %d\n", $w, $h;
 
 for my $i (  0.. $#$mat) 
 {
-    printf "%s\n", join("", @{$mat->[$i]} );
+    #printf "%s\n", join("", @{$mat->[$i]} );
 }
 
 my $font_w = $GenTextMatrix::bbox->advance_width;
 my $font_h = $GenTextMatrix::bbox->font_height;
 
 printf "%d %d\n", $font_w, $font_h;
-my $submat;
+my ($submat, $char);
 
 for my $R ( 0 .. 2 )
 {
     for my $C ( 0 .. 6 )
     {
         $submat = region( $mat, $R, $C, $font_w, $font_h );
-        dump_mat($submat);
-        #$char = match( $submat );
+        $char = match( $submat );
+        exit;
     }
 }
 
 sub match
 {
+    my ( $submat ) = @_;
 
+    my $end = $#GenTextMatrix::TEXT;
+    my $max = 0;
+    my $char;
+    my $sum;
+
+    for my $id ( 0 .. $end )
+    {
+        printf "%s\n", join("", @{$GenTextMatrix::TEXT_DATA[$id]});
+        printf "%s\n", join("", @$submat );
+        $sum = sum( map { ! ($submat->[$_] xor $GenTextMatrix::TEXT_DATA[$id]->[$_]) } ( 0 .. $#$submat ) );
+        if ($sum > $max) { $char = $GenTextMatrix::TEXT[$id]; $max = $sum }
+        printf "%s\n", $sum;
+    }
+
+    printf "best match: %s\n", $char;
+    return $char;
 }
 
 
@@ -65,11 +82,11 @@ sub region
 
     my $submat;
 
-    for my $r ( $R * $font_h .. $R * $font_h + $font_h )
+    for my $r ( $R * $font_h .. $R * $font_h + $font_h-1 )
     {
-        for my $c ( $C * $font_w .. $C * $font_w + $font_w )
+        for my $c ( $C * $font_w .. $C * $font_w + $font_w-1 )
         {
-            $submat->[$r % $font_h][$c % $font_w ] = $mat->[$r][$c];
+            push @$submat, $mat->[$r][$c];
         }
     }
     return $submat;

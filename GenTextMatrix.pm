@@ -16,17 +16,14 @@ our $font = Imager::Font->new(file  => encode('gbk', 'C:/windows/fonts/Consola.T
 
 our $bbox = $font->bounding_box(string=>"_");
 our @TEXT = split("", 
-      q(!"#$%&'()*+,-./01234
-        56789:;<=>?@ABCDEFGH
-        IJKLMNOPQRSTUVWXYZ[\
-        ]^_`abcdefghijklmnop
-        qrstuvwxyz{|}~) 
+      q( !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[).
+      q(]^_`abcdefghijklmnopqrstuvwxyz{|}~)
   );
 our @TEXT_DATA;
 
 for my $id ( 0 .. $#TEXT )
 {
-    $TEXT_DATA[$id] = get_text_map( $TEXT[$id] , $TEXT_DATA[$id] );
+    $TEXT_DATA[$id] = get_text_map( $TEXT[$id] );
 }
 
 sub get_text_map
