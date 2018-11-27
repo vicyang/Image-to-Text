@@ -31,7 +31,7 @@ sub get_text_map
     our ($font, $SIZE);
     my ( $char, $ref ) = @_;
 
-    my $bbox = $font->bounding_box( string => $char );
+    #my $bbox = $font->bounding_box( string => $char );  #使用全局bbox尺寸
     my $img = Imager->new(xsize=>$bbox->advance_width,
                           ysize=>$bbox->font_height + 2, channels=>4);
 
