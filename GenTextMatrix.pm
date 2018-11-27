@@ -10,14 +10,14 @@ use Encode;
 use Imager;
 use List::Util qw/sum/;
 
-our $SIZE = 10;
-our $font = Imager::Font->new(file  => encode('gbk', 'C:/windows/fonts/Consola.TTF'), #STXINGKA.TTF
+our $SIZE = 18;
+our $font = Imager::Font->new(file  => encode('gbk', 'C:/windows/fonts/consola.TTF'), #STXINGKA.TTF
                           size  => $SIZE );
 
 our $bbox = $font->bounding_box(string=>"_");
 our @TEXT = split("", 
-      q( !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[).
-      q(]^_`abcdefghijklmnopqrstuvwxyz{|}~)
+      q( !"$%&'()*+,-./\\0123456789:;<=>?[).
+      q(]^_`{|}~)
   );
 our @TEXT_DATA;
 

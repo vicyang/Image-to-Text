@@ -13,7 +13,7 @@ my $img = Imager->new( file => "gecko.jpg" )
     or die Imager->errstr();
 
 # 缩放
-$img = $img->scale(xpixels => 80);
+$img = $img->scale(xpixels => 500);
 my ($h, $w) = ($img->getheight(), $img->getwidth());
 
 # 反色
@@ -26,7 +26,7 @@ for my $y ( 0 .. $h-1 )
 {
     @colors = $img->getscanline( y => $y );
     next if sum( map { ($_->rgba)[0] } @colors ) < 10 ;
-    push @$mat, [ map { sum($_->rgba) < 255 ? 0 : 1 } @colors];
+    push @$mat, [ map { sum($_->rgba) < 500 ? 0 : 1 } @colors];
 }
 $h = $#$mat + 1;
 
@@ -43,15 +43,18 @@ my $font_h = $GenTextMatrix::bbox->font_height;
 printf "%d %d\n", $font_w, $font_h;
 my ($submat, $char);
 
-for my $R ( 0 .. 2 )
+my $char_mat;
+for my $R ( 0 .. $h/$font_h - 1 )
 {
-    for my $C ( 0 .. 6 )
+    for my $C ( 0 .. $w/$font_w -1 )
     {
         $submat = region( $mat, $R, $C, $font_w, $font_h );
         $char = match( $submat );
-        exit;
+        $char_mat->[$R][$C] = $char;
     }
 }
+
+dump_mat( $char_mat );
 
 sub match
 {
@@ -64,14 +67,13 @@ sub match
 
     for my $id ( 0 .. $end )
     {
-        printf "%s\n", join("", @{$GenTextMatrix::TEXT_DATA[$id]});
-        printf "%s\n", join("", @$submat );
+        #printf "%s\n", join("", @{$GenTextMatrix::TEXT_DATA[$id]});
+        #printf "%s\n", join("", @$submat );
         $sum = sum( map { ! ($submat->[$_] xor $GenTextMatrix::TEXT_DATA[$id]->[$_]) } ( 0 .. $#$submat ) );
         if ($sum > $max) { $char = $GenTextMatrix::TEXT[$id]; $max = $sum }
-        printf "%s\n", $sum;
+        #printf "%s\n", $sum;
     }
 
-    printf "best match: %s\n", $char;
     return $char;
 }
 
