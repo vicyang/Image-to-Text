@@ -10,7 +10,7 @@ use Encode;
 use Imager;
 use List::Util qw/sum/;
 
-our $SIZE = 18;
+our $SIZE = 12;
 our $font = Imager::Font->new(file  => encode('gbk', 'C:/windows/fonts/consola.TTF'), #STXINGKA.TTF
                           size  => $SIZE );
 
@@ -33,7 +33,7 @@ sub get_text_map
 
     my $bbox = $font->bounding_box( string => $char );
     my $img = Imager->new(xsize=>$bbox->advance_width,
-                          ysize=>$bbox->font_height, channels=>4);
+                          ysize=>$bbox->font_height + 2, channels=>4);
 
     my $h = $img->getheight();
     my $w = $img->getwidth();

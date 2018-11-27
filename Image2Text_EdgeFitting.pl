@@ -9,11 +9,11 @@ use GenTextMatrix;
 use List::Util qw/sum/;
 STDOUT->autoflush(1);
 
-my $img = Imager->new( file => "gecko.jpg" )
+my $img = Imager->new( file => "gecko_contour.jpg" )
     or die Imager->errstr();
 
 # 缩放
-$img = $img->scale(xpixels => 500);
+#$img = $img->scale(xpixels => 380);
 my ($h, $w) = ($img->getheight(), $img->getwidth());
 
 # 反色
@@ -26,7 +26,7 @@ for my $y ( 0 .. $h-1 )
 {
     @colors = $img->getscanline( y => $y );
     next if sum( map { ($_->rgba)[0] } @colors ) < 10 ;
-    push @$mat, [ map { sum($_->rgba) < 500 ? 0 : 1 } @colors];
+    push @$mat, [ map { sum($_->rgba) < 100 ? 0 : 1 } @colors];
 }
 $h = $#$mat + 1;
 
@@ -38,7 +38,7 @@ for my $i (  0.. $#$mat)
 }
 
 my $font_w = $GenTextMatrix::bbox->advance_width;
-my $font_h = $GenTextMatrix::bbox->font_height;
+my $font_h = $GenTextMatrix::bbox->font_height+2;
 
 printf "%d %d\n", $font_w, $font_h;
 my ($submat, $char);
