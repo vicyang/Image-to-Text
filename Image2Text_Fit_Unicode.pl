@@ -4,16 +4,18 @@
 =cut
 
 use strict;
+use Encode;
 use Imager;
 use GenTextMatrixW;
 use List::Util qw/sum/;
+use File::Slurp;
 STDOUT->autoflush(1);
 
 my $img = Imager->new( file => "gecko_contour.jpg" )
     or die Imager->errstr();
 
-# 缩放
-#$img = $img->scale(xpixels => 300);
+# 缩放    
+$img = $img->scale(xpixels => 300);
 my ($h, $w) = ($img->getheight(), $img->getwidth());
 
 # 反色
@@ -37,8 +39,8 @@ for my $i (  0.. $#$mat)
     #printf "%s\n", join("", @{$mat->[$i]} );
 }
 
-my $font_w = $GenTextMatrix::bbox->advance_width;
-my $font_h = $GenTextMatrix::bbox->font_height+2;
+my $font_w = $GenTextMatrixW::bbox->font_height;
+my $font_h = $GenTextMatrixW::bbox->font_height;
 
 printf "%d %d\n", $font_w, $font_h;
 my ($submat, $char);
@@ -60,7 +62,7 @@ sub match
 {
     my ( $submat ) = @_;
 
-    my $end = $#GenTextMatrix::TEXT;
+    my $end = $#GenTextMatrixW::TEXT;
     my $max = 0;
     my $char;
     my $sum;
@@ -69,8 +71,8 @@ sub match
     {
         #printf "%s\n", join("", @{$GenTextMatrix::TEXT_DATA[$id]});
         #printf "%s\n", join("", @$submat );
-        $sum = sum( map { ! ($submat->[$_] xor $GenTextMatrix::TEXT_DATA[$id]->[$_]) } ( 0 .. $#$submat ) );
-        if ($sum > $max) { $char = $GenTextMatrix::TEXT[$id]; $max = $sum }
+        $sum = sum( map { ! ($submat->[$_] xor $GenTextMatrixW::TEXT_DATA[$id]->[$_]) } ( 0 .. $#$submat ) );
+        if ($sum > $max) { $char = $GenTextMatrixW::TEXT[$id]; $max = $sum }
         #printf "%s\n", $sum;
     }
 
@@ -98,7 +100,11 @@ sub dump_mat
 {
     my ($mat) = @_;
 
+    my $buff = "";
+
     for my $r ( 0 .. $#$mat ) {
-        printf "%s\n", join("", @{$mat->[$r]} );
+        $buff .= join("", @{$mat->[$r]} ). "\r\n";
     }
+
+    write_file("CHAR.txt", {binmode=>":raw"}, encode('utf8', $buff) );
 }
