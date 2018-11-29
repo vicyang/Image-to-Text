@@ -12,7 +12,7 @@ STDOUT->autoflush(1);
 
 INIT
 {
-    $GenTextMatrix::SIZE = 20;
+    $GenTextMatrix::SIZE = 12;
     $GenTextMatrix::FONT = "C:/windows/fonts/consola.ttf";
     GenTextMatrix::init( map { chr($_) } ( 1 .. 1000 ) );
 
