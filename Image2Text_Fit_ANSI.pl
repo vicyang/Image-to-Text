@@ -9,11 +9,30 @@ use GenTextMatrix;
 use List::Util qw/sum/;
 STDOUT->autoflush(1);
 
-my $img = Imager->new( file => "gecko_contour.jpg" )
-    or die Imager->errstr();
+# my $img = Imager->new( file => "gecko_contour.jpg" )
+#     or die Imager->errstr();
+
+my $img = Imager->new( xsize => 120, ysize => 120 );
+
+# 背景色
+$img->box(color=> 'white', xmin=> 0, ymin=>0,
+                           xmax=>100, ymax=>100, filled=>1 );
+
+$img->box(color=> 'black', xmin=> 0, ymin=>0,
+                           xmax=>60, ymax=>60, filled=>0 );
+
+$img->box(color=> 'black', xmin=> 30, ymin=>30,
+                         xmax=>100, ymax=>100, filled=>0 );
+
+$img->box(color=> 'black', xmin=> 50, ymin=>50,
+                         xmax=>80, ymax=>80, filled=>0 );
+
+$img->circle(color=>'black', r=>20, x=>50, y=>50, aa=>1, filled=>0);
+
+$img->write( file => "box.png");
 
 # 缩放
-#$img = $img->scale(xpixels => 300);
+$img = $img->scale(xpixels => 400);
 my ($h, $w) = ($img->getheight(), $img->getwidth());
 
 # 反色
