@@ -60,9 +60,9 @@ sub get_text_vec
     my $W = scalar(@{$mat->[0]});
     my ($L, $R, $U, $D);
     
-    if ( $W % 2 == 1 ) { $L = int($W/2); $R = $L; }
+    if ( $W % 2 == 1 ) { $L = int($W/2); $R = $L+1; }
     else               { $L = int($W/2)-1; $R = $L+1; }
-    if ( $H % 2 == 1 ) { $U = int($H/2); $D = $U; }
+    if ( $H % 2 == 1 ) { $U = int($H/2); $D = $U+1; }
     else               { $U = int($H/2)-1; $D = $U+1; }
 
     my @vec;
