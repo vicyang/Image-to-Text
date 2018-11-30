@@ -16,10 +16,14 @@ INIT
     $GenTextMatrix::FONT = "C:/windows/fonts/consola.ttf";
     GenTextMatrix::init( map { chr($_) } ( 1 .. 1000 ) );
 
-    for ( 0 .. 20 )
+    my $TEXT = \@GenTextMatrix::TEXT;
+    my $TEXT_MAT = \@GenTextMatrix::TEXT_MAT;
+    my $TEXT_VEC = \@GenTextMatrix::TEXT_VEC;
+
+    for ( 0 .. 10 )
     {
-        printf "%s\n", $GenTextMatrix::TEXT[$_];
-        dump_mat( $GenTextMatrix::TEXT_DATA[$_] );
+        printf "%d %s %d %d %d %d\n", $_, encode('gbk', $TEXT->[$_]), @{$TEXT_VEC->[$_]};
+        dump_mat( $TEXT_MAT->[$_] );
     }
 
 }

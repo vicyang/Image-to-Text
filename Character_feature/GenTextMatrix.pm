@@ -16,19 +16,17 @@ our $FONT = "C:/windows/fonts/consola.TTF";
 our $font;
 
 our @TEXT;
-our @TEXT_DATA;
+our @TEXT_MAT;
+our @TEXT_VEC;
 
 sub init
 {
-    our ($SIZE, $FONT, $font, @TEXT, @TEXT_DATA);
+    our ($SIZE, $FONT, $font, @TEXT, @TEXT_MAT, @TEXT_VEC);
     my @charset = @_;
     $font = Imager::Font->new(file => $FONT, size => $SIZE) or die img->errstr;
 
-=temp
     # 返回 <0x01> 或者 <0x00> (字符形式)
-    my $res = $font->has_chars( string=>chr($code) );
-    if ( ord($res) == 1 ) { printf "%d %s\n", $code, encode('gbk', chr($code)) }
-=cut
+    # my $res = $font->has_chars( string=>chr($code) );  # 筛选程度有限
 
     my $id;
     my $bbox;
@@ -42,9 +40,38 @@ sub init
         #next if ord($font->has_chars( string=>$char )) == 0 ;
 
         $TEXT[$id] = $char;
-        $TEXT_DATA[$id] = get_text_map( $char );
+        $TEXT_MAT[$id] = get_text_map( $char );
+        $TEXT_VEC[$id] = get_text_vec( $TEXT_MAT[$id] );
         $id++;
     }
+}
+
+=get_text_vec
+    像素数据转换向量特征
+    方案一：四分割，获取四个象限的有效像素数量，作为四个分量
+           col = 3, half col = int(3/2) + 1; left = 0,1; right = 1,2
+           col = 4, half col = 4/2;          left = 0,1; right = 2,3;
+=cut
+
+sub get_text_vec 
+{
+    my ( $mat ) = @_;
+    my $H = scalar( @$mat );
+    my $W = scalar(@{$mat->[0]});
+    my ($L, $R, $U, $D);
+    
+    if ( $W % 2 == 1 ) { $L = int($W/2); $R = $L; }
+    else               { $L = int($W/2)-1; $R = $L+1; }
+    if ( $H % 2 == 1 ) { $U = int($H/2); $D = $U; }
+    else               { $U = int($H/2)-1; $D = $U+1; }
+
+    my @vec;
+    push @vec, sum( map { sum( @{$mat->[$_]}[ 0 .. $L ] ) } ( 0 .. $U ) );
+    push @vec, sum( map { sum( @{$mat->[$_]}[ $R .. $W-1 ] ) } ( 0 .. $U ) );
+    push @vec, sum( map { sum( @{$mat->[$_]}[ 0 .. $L ] ) } ( $D .. $H-1 ) );
+    push @vec, sum( map { sum( @{$mat->[$_]}[ $R .. $W-1 ] ) } ( $D .. $H-1 ) );
+
+    return \@vec;
 }
 
 sub get_text_map
@@ -53,8 +80,8 @@ sub get_text_map
     my ( $char ) = @_;
 
     my $bbox = $font->bounding_box( string => $char );
-    my $img = Imager->new(xsize=>$bbox->display_width,
-                          ysize=>$bbox->text_height, channels=>4);
+    my $img = Imager->new(xsize=>$bbox->advance_width,
+                          ysize=>$bbox->font_height, channels=>4);
 
     my $h = $img->getheight();
     my $w = $img->getwidth();
@@ -63,15 +90,15 @@ sub get_text_map
     $img->box(xmin => 0, ymin => 0, xmax => $w, ymax => $h,
               filled => 1, color => 'white');
 
-    $img->align_string(
+    $img->string(
             font  => $font,
             text  => $char,
             x     => 0,
-            y     => $h,
+            y     => $h + $bbox->global_descent, # global_descent 是负数
             size  => $SIZE,
             color => 'black',
             #aa    => 1,     # anti-alias
-            halign => 'left', valign => 'bottom',
+            #halign => 'begin', valign => 'center',
         );
 
     my @colors;
