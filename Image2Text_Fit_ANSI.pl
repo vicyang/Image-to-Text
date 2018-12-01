@@ -17,6 +17,7 @@ INIT
     $GenTextMatrix::SIZE = 8;
     $GenTextMatrix::FONT = "C:/windows/fonts/msyh.ttf";
     my @charset = split("", "┌┍┎┏┐┑┒┓└┕┖┗┘┙┚┛├┝┞┟┠┡┢┣┤┥┦┧┨┩┪┫┬┭┮┯┰┱┲┳┴┵┶┷┸┹┺┻┼┽┾┿╀╁╂╃╄╅╆╇╈╉╊╋╌╍╎╏═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╧╨╩╪╫╬╭╮╯╰╱╲╳▀▁▂▃▄▅▆▇█▉▊▋▌▍▎▏▐●◐◑◒◓◔◕+<=>");
+    #push @charset, map { chr($_) } ( 32 .. 126 );
     #@charset = map { chr($_) } ( 1 .. 2000 );
 
     GenTextMatrix::init( @charset );
