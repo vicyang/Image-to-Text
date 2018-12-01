@@ -34,7 +34,8 @@ INIT
 
     for ( 0 .. $ubound )
     {
-        my $idx = $arr[$_];
+        #my $idx = $arr[$_];
+        my $idx = $_;
         printf "%d %s %d %d %d %d\n", $idx, encode('gbk', $TEXT->[$idx]), @{$TEXT_VEC->[$idx]};
         dump_mat( $TEXT_MAT->[$idx] );
     }
